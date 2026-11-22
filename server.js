@@ -30,11 +30,23 @@ const who = (d) => {
   return { id, name: u.nickname || d.nickname || id };
 };
 
+let timer = null;
+function retry(sec) {
+  if (timer) return;
+  timer = setTimeout(() => { timer = null; start(); }, (sec || 10) * 1000);
+}
+// กันเซิร์ฟเวอร์ล้ม: ถ้าไลบรารีโยน error ออกมา ให้จดไว้แล้วลองต่อใหม่
+process.on('uncaughtException', (e) => { console.log('ข้อผิดพลาด:', (e && e.message) || e); retry(15); });
+process.on('unhandledRejection', (e) => { console.log('ข้อผิดพลาด:', (e && e.message) || e); retry(15); });
+
 function start() {
-  const live = new Conn(USERNAME);
+  let live;
+  try { live = new Conn(USERNAME); } catch (e) { console.log('สร้างการเชื่อมต่อไม่ได้:', e.message || e); return retry(15); }
+  live.on('error', (e) => console.log('ไลบรารีแจ้ง error:', (e && e.message) || e));
+
   live.connect()
     .then(() => console.log('เชื่อมไลฟ์แล้ว @' + USERNAME))
-    .catch((e) => { console.log('เชื่อมไม่ได้ (ต้องกำลังไลฟ์อยู่):', e.message || e); setTimeout(start, 10000); });
+    .catch((e) => { console.log('เชื่อมไม่ได้ (ต้องกำลังไลฟ์อยู่):', (e && e.message) || e); retry(10); });
 
   live.on('member', (d) => send({ type: 'join', ...who(d) }));
   live.on('like', (d) => send({ type: 'like', count: d.likeCount || 1, ...who(d) }));
@@ -44,7 +56,7 @@ function start() {
     if (d.giftType === 1 && !d.repeatEnd) return;   // รอให้ของขวัญรัวจบก่อนค่อยนับ
     send({ type: 'gift', diamonds: (d.diamondCount || 1) * (d.repeatCount || 1), ...who(d) });
   });
-  live.on('disconnected', () => setTimeout(start, 5000));
+  live.on('disconnected', () => retry(5));
 }
 start();
 server.listen(PORT, () => console.log('เกมพร้อมที่พอร์ต ' + PORT));
