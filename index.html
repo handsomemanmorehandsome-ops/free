@@ -133,7 +133,7 @@ button{border-radius:20px;background:linear-gradient(#FF9EC3,#FF7DAE)}button.alt
   </div>
   <div id="bar"><i></i></div>
  </div>
- <div id="qwrap"><h2 id="qh">คิวถัดไป</h2><div id="queue"></div></div>
+ <div id="net" style="font-size:11px;opacity:.75;margin-top:4px;min-height:14px"></div><div id="qwrap"><h2 id="qh">คิวถัดไป</h2><div id="queue"></div></div>
  <div id="ctl">
   <button id="b-join" class="alt">เข้าห้อง</button><button id="b-like">กดใจ</button><button id="b-fol">ติดตาม</button><button id="b-gift">ของขวัญ</button><button id="b-auto" class="on">ออโต้</button></div><div id="ctl2"><button id="b-scene" class="alt">ธีม: ห้องน้ำ</button><button id="b-snd" class="alt">🔇 เสียง: ปิด</button>
  </div>
@@ -400,7 +400,18 @@ $('#b-auto').onclick = function () { auto = !auto; this.className = auto ? 'on' 
 var wsUrl = new URLSearchParams(location.search).get('ws');
 if (wsUrl) {
   auto = false; $('#ctl').style.display = 'none';
-  (function conn() { var w = new WebSocket(wsUrl); w.onmessage = function (m) { onEvent(JSON.parse(m.data)); }; w.onclose = function () { setTimeout(conn, 3000); }; })();
+  (function conn() {
+    var net = $('#net'), n = 0, w = new WebSocket(wsUrl);
+    net.textContent = 'กำลังต่อเซิร์ฟเวอร์...';
+    w.onopen = function () { net.textContent = 'ต่อเซิร์ฟเวอร์แล้ว'; };
+    w.onmessage = function (m) {
+      var e = JSON.parse(m.data);
+      if (e.type === 'status') { net.textContent = e.text + (n ? ' · รับอีเวนต์ ' + n : ''); return; }
+      n++; net.textContent = 'รับอีเวนต์แล้ว ' + n + ' รายการ · ล่าสุด: ' + e.type + ' ' + (e.name || '');
+      onEvent(e);
+    };
+    w.onclose = function () { net.textContent = 'หลุดการเชื่อมต่อ กำลังต่อใหม่...'; setTimeout(conn, 3000); };
+  })();
 } else autoLoop();
 setScene(0);
 
