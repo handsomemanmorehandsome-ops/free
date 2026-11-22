@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ห้องอาบน้ำน้องหมี</title>
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#CDEBF7;--tile:#E8F7FD;--tile2:#D3EEF9;--ink:#2B3A67;--card:#fff;--pink:#FFB3CF;--pink2:#FF8FB8;--water:#7CC8EC;--water2:#5BB5E0;--sun:#FFE07A;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17264A;--tile:#22386B;--tile2:#1D3260;--ink:#EAF3FF;--card:#2B427C}}
+:root[data-theme="dark"]{--bg:#17264A;--tile:#22386B;--tile2:#1D3260;--ink:#EAF3FF;--card:#2B427C}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'Mali',system-ui,sans-serif;display:flex;justify-content:center;overflow:hidden}
+#app{width:100%;max-width:460px;height:100%;display:flex;flex-direction:column;padding:8px 12px 10px}
+#stats{display:flex;gap:6px;justify-content:space-between}
+.st{flex:1;background:var(--card);border-radius:16px;padding:5px 4px;text-align:center;font-size:13px;font-weight:700;box-shadow:0 3px 0 rgba(43,58,103,.18)}
+.st b{display:block;font-size:17px}
+#room{position:relative;flex:1;min-height:0;margin-top:8px;border-radius:28px;overflow:hidden;background:
+ linear-gradient(var(--tile) 0 0) 0 0/100% 100%,var(--tile);box-shadow:0 5px 0 rgba(43,58,103,.2)}
+#room::before{content:"";position:absolute;inset:0;background:
+ repeating-linear-gradient(0deg,transparent 0 46px,var(--tile2) 46px 48px),
+ repeating-linear-gradient(90deg,transparent 0 46px,var(--tile2) 46px 48px)}
+#win{position:absolute;top:6%;right:8%;width:72px;height:84px;border-radius:40px 40px 10px 10px;background:linear-gradient(#9BDDF5,#E4F8FF);border:4px solid #fff;box-shadow:0 0 0 3px var(--ink) inset}
+#win::after{content:"☁️";position:absolute;font-size:22px;left:12px;top:18px;animation:drift 9s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translateX(18px)}}
+#shower{position:absolute;top:0;left:50%;margin-left:-14px;width:28px;height:38px;background:#cfd8e6;border-radius:0 0 14px 14px;border:3px solid var(--ink);border-top:0;transition:opacity .4s}
+#shower::before{content:"";position:absolute;top:-30px;left:10px;width:5px;height:30px;background:#aeb9cc}
+.drop{position:absolute;top:36px;width:4px;height:12px;border-radius:4px;background:#8fd3f3;animation:fall .7s linear forwards}
+@keyframes fall{to{transform:translateY(150px);opacity:0}}
+#tubwrap{position:absolute;left:50%;bottom:7%;width:88%;max-width:360px;aspect-ratio:1.25;transform:translateX(-50%)}
+#pet{position:absolute;left:50%;top:-4%;width:46%;aspect-ratio:1;margin-left:-23%;display:flex;align-items:center;justify-content:center;font-size:clamp(60px,20vw,96px);transition:opacity .35s,transform .35s;z-index:2}
+#pet.idle{opacity:0;transform:translateY(-50px) scale(.8)}
+#pet.on{animation:scrub .7s ease-in-out infinite}
+@keyframes scrub{0%,100%{transform:translateY(0) rotate(-7deg)}50%{transform:translateY(8px) rotate(7deg)}}
+#pet .crown{position:absolute;top:-14px;font-size:.38em}
+#pet .sponge{position:absolute;right:-6%;bottom:6%;font-size:.42em;animation:rub .35s ease-in-out infinite alternate}
+@keyframes rub{to{transform:translate(-30px,-12px) rotate(-25deg)}}
+#tubback{position:absolute;inset:34% 0 0 0;background:var(--pink);border:4px solid var(--ink);border-radius:26px 26px 90px 90px;z-index:1}
+#tubback::after{content:"";position:absolute;left:8%;right:8%;top:8%;height:7px;border-radius:5px;background:rgba(255,255,255,.55)}
+#water{position:absolute;left:3%;right:3%;bottom:0;top:46%;z-index:3;overflow:hidden;border-radius:0 0 84px 84px;pointer-events:none}
+#water svg{position:absolute;left:0;top:0;width:200%;height:100%;animation:wave 4s linear infinite}
+@keyframes wave{to{transform:translateX(-50%)}}
+.foam{position:absolute;z-index:4;font-size:26px;animation:bob 2.4s ease-in-out infinite alternate;pointer-events:none}
+@keyframes bob{to{transform:translateY(-7px)}}
+.feet{position:absolute;bottom:-14px;width:34px;height:20px;background:#E3A94A;border:3px solid var(--ink);border-radius:8px}
+.bub{position:absolute;border-radius:50%;background:rgba(255,255,255,.8);border:2px solid #fff;animation:up 2.6s ease-out forwards;z-index:5;pointer-events:none}
+@keyframes up{to{transform:translateY(-220px) translateX(var(--dx,0));opacity:0}}
+.fx{position:absolute;z-index:6;font-size:24px;animation:fly 1.6s ease-out forwards;pointer-events:none}
+@keyframes fly{to{transform:translate(var(--dx),-200px) rotate(40deg);opacity:0}}
+#banner{position:absolute;top:13%;left:50%;transform:translateX(-50%);max-width:82%;background:var(--card);border:3px solid var(--ink);border-radius:20px;padding:5px 14px;text-align:center;font-weight:700;font-size:16px;z-index:8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .3s}
+#banner small{display:block;font-size:11px;font-weight:500;opacity:.75}
+#banner.off{opacity:0}
+#bar{position:absolute;left:12%;right:12%;bottom:2.5%;height:12px;border-radius:8px;background:rgba(255,255,255,.85);border:3px solid var(--ink);overflow:hidden;z-index:8}
+#bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink2),var(--sun))}
+#done{position:absolute;left:0;right:0;top:34%;text-align:center;font-size:26px;font-weight:700;z-index:9;opacity:0;pointer-events:none}
+#done.show{animation:pop 1.3s ease-out}
+@keyframes pop{0%{opacity:0;transform:scale(.5)}25%{opacity:1;transform:scale(1.1)}80%{opacity:1}100%{opacity:0;transform:scale(1)}}
+#qwrap{margin-top:8px}
+#qwrap h2{margin:0 0 4px 4px;font-size:13px;font-weight:700}
+#queue{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 5px;scrollbar-width:none;min-height:54px}
+#queue::-webkit-scrollbar{display:none}
+.q{flex:0 0 auto;display:flex;align-items:center;gap:6px;background:var(--card);border-radius:18px;padding:4px 10px 4px 5px;font-size:13px;font-weight:700;box-shadow:0 3px 0 rgba(43,58,103,.18);max-width:150px}
+.q .av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--sun)}
+.q span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.q.vip{outline:3px solid var(--sun)}
+.empty{font-size:13px;opacity:.7;padding:10px 6px}
+#ctl{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:6px}
+button{font:inherit;font-weight:700;font-size:12px;border:0;border-radius:16px;padding:8px 2px;background:var(--pink2);color:#fff;box-shadow:0 3px 0 rgba(43,58,103,.3);cursor:pointer}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(43,58,103,.3)}
+button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+button.alt{background:var(--water2)}
+button.on{background:#5CC48B}
+#room{background:linear-gradient(#FFE6F1,#E1F4FF 62%)}
+:root[data-theme="dark"] #room{background:linear-gradient(#3B3472,#22386B 62%)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #room{background:linear-gradient(#3B3472,#22386B 62%)}}
+#room::before{background:radial-gradient(circle,rgba(255,255,255,.55) 4px,transparent 5px) 0 0/30px 30px}
+.st{color:#2B3A67}.st:nth-child(1){background:#D9F3FF}.st:nth-child(2){background:#FFD9E6}.st:nth-child(3){background:#FFF1B8}.st:nth-child(4){background:#E6DBFF}
+#banner{background:#fff;color:#2B3A67;border:4px solid var(--pink2);border-radius:26px;box-shadow:0 4px 0 rgba(255,143,184,.45)}
+#tubback{background:linear-gradient(#FFC9DE,#FF9EC3)}
+#shelf{position:absolute;left:5%;top:32%;font-size:22px;padding:4px 10px;background:#fff;color:#2B3A67;border-radius:12px;border-bottom:5px solid #F3B6CC;letter-spacing:4px;z-index:1}
+.tw{position:absolute;font-size:18px;animation:tw 2.4s ease-in-out infinite alternate}
+@keyframes tw{from{opacity:.25;transform:scale(.8)}to{opacity:1;transform:scale(1.15)}}
+#mat{position:absolute;left:50%;bottom:1%;width:74%;max-width:310px;height:6%;margin-left:-37%;border-radius:50%;background:#FFD1E3;border:3px solid #fff}
+#pet .crown{top:-34px}
+#pet .hat{position:absolute;top:-4%;left:50%;width:62%;height:26%;margin-left:-31%;background:radial-gradient(circle at 20% 70%,#fff 0 30%,transparent 31%),radial-gradient(circle at 50% 38%,#fff 0 34%,transparent 35%),radial-gradient(circle at 80% 70%,#fff 0 30%,transparent 31%);filter:drop-shadow(0 2px 0 rgba(43,58,103,.25))}
+#pet .bl{position:absolute;bottom:27%;width:15%;height:9%;border-radius:50%;background:rgba(255,110,160,.5)}
+#done{color:#FF5C9E;text-shadow:0 2px 0 #fff,0 0 14px #fff}
+button{border-radius:20px;background:linear-gradient(#FF9EC3,#FF7DAE)}button.alt{background:linear-gradient(#8ED4F3,#5BB5E0)}button.on{background:linear-gradient(#7BDDA3,#4FBF85)}
+:root:root #room{background:var(--rbg);--rbg:linear-gradient(#FFE6F1,#E1F4FF 62%);--tubc:linear-gradient(#FFC9DE,#FF9EC3);--w1:#7CC8EC;--w2:#5BB5E0;--matc:#FFD1E3;--winc:linear-gradient(#9BDDF5,#E4F8FF);--dots:radial-gradient(circle,rgba(255,255,255,.55) 4px,transparent 5px) 0 0/30px 30px}
+:root:root #room[data-scene=sea]{--rbg:linear-gradient(#C8F1FF,#5CC4E4 72%,#F6E2B0);--tubc:linear-gradient(#A6EEDF,#4FCFC0);--w1:#4AA8E8;--w2:#2F8FD6;--matc:#F2DDA6;--winc:radial-gradient(circle,#BDEBFF 52%,#8B9BB5 54% 64%,#BDEBFF 66%);--dots:radial-gradient(circle,rgba(255,255,255,.4) 6px,transparent 7px) 0 0/46px 46px}
+:root:root #room[data-scene=snow]{--rbg:linear-gradient(#CFE2FF,#F4F9FF 65%,#fff);--tubc:linear-gradient(#DDAE7C,#B98355);--w1:#8FDDE4;--w2:#6CCBD9;--matc:#fff;--winc:linear-gradient(#B5D3FF,#F2F8FF);--dots:radial-gradient(circle,rgba(255,255,255,.9) 3px,transparent 4px) 0 0/26px 26px}
+:root:root #room[data-scene=garden]{--rbg:linear-gradient(#FFF6C9,#DFF5C8 60%,#B9E7A0);--tubc:linear-gradient(#DCCBFF,#B79EF6);--w1:#86D6E6;--w2:#62C1DA;--matc:#CFF0B8;--winc:linear-gradient(#BEE9FF,#FFF7C2);--dots:radial-gradient(circle,rgba(255,255,255,.7) 5px,transparent 6px) 0 0/38px 38px}
+#room::before{background:var(--dots)}
+#tubback{background:var(--tubc)}
+#mat{background:var(--matc)}
+#win{background:var(--winc)}
+#water path:nth-child(1){fill:var(--w1)}
+#water path:nth-child(2){fill:var(--w2)}
+.amb{position:absolute;top:-24px;z-index:2;opacity:.9;pointer-events:none;animation:ambd 6s linear forwards}
+.amb.up{top:auto;bottom:-24px;animation-name:ambu}
+@keyframes ambd{from{top:-24px}to{top:105%}}
+@keyframes ambu{from{bottom:-24px}to{bottom:105%}}
+#ctl2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.dirt{position:absolute;opacity:.93;transition:transform .3s,opacity .3s;z-index:1;pointer-events:none}
+.dirt svg{width:100%;height:100%;display:block;overflow:visible}
+.dirt.gone{transform:scale(0) !important;opacity:0}
+#tubwrap{touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none}
+@media (prefers-reduced-motion:reduce){.tw{animation:none}.amb{display:none}}
+@media (prefers-reduced-motion:reduce){#pet.on,.sponge,#water svg,.foam{animation:none}.bub,.fx,.drop{animation-duration:.01s}}
+</style>
+</head>
+<body>
+<div id="app">
+ <div id="stats">
+  <div class="st">🛁<b id="s-done">0</b>อาบแล้ว</div>
+  <div class="st">❤️<b id="s-like">0</b>กดใจ</div>
+  <div class="st">⭐<b id="s-fol">0</b>ติดตาม</div>
+  <div class="st">🎁<b id="s-gift">0</b>ของขวัญ</div>
+ </div>
+ <div id="room">
+  <div id="win"></div><div id="shelf">🧴🧼🌷</div><div class="tw" style="left:10%;top:10%">✨</div><div class="tw" style="left:32%;top:20%;animation-delay:.7s">⭐</div><div class="tw" style="right:24%;top:36%;animation-delay:1.3s">💖</div><div id="mat"></div>
+  <div id="shower"></div>
+  <div id="banner" class="off"></div>
+  <div id="done">สะอาดแล้ว ✨</div>
+  <div id="tubwrap">
+   <div id="pet" class="idle"></div>
+   <div id="tubback"></div>
+   <div id="water"><svg viewBox="0 0 400 100" preserveAspectRatio="none"><path d="M0 14 Q25 0 50 14 T100 14 T150 14 T200 14 T250 14 T300 14 T350 14 T400 14 V100 H0Z" fill="#7CC8EC" fill-opacity=".82"/><path d="M0 24 Q25 12 50 24 T100 24 T150 24 T200 24 T250 24 T300 24 T350 24 T400 24 V100 H0Z" fill="#5BB5E0" fill-opacity=".6"/></svg></div>
+   <span class="foam" style="left:12%;bottom:30%">🫧</span><span class="foam" style="right:14%;bottom:36%;animation-delay:.8s">🫧</span><span class="foam" style="left:44%;bottom:18%;animation-delay:1.2s">🦆</span>
+   <i class="feet" style="left:12%"></i><i class="feet" style="right:12%"></i>
+  </div>
+  <div id="bar"><i></i></div>
+ </div>
+ <div id="qwrap"><h2 id="qh">คิวถัดไป</h2><div id="queue"></div></div>
+ <div id="ctl">
+  <button id="b-join" class="alt">เข้าห้อง</button><button id="b-like">กดใจ</button><button id="b-fol">ติดตาม</button><button id="b-gift">ของขวัญ</button><button id="b-auto" class="on">ออโต้</button></div><div id="ctl2"><button id="b-scene" class="alt">ธีม: ห้องน้ำ</button><button id="b-snd" class="alt">🔇 เสียง: ปิด</button>
+ </div>
+</div>
+
+<script>
+// ===== ตั้งค่า (แก้ตัวเลขได้) =====
+var BATH_SECONDS = 4;   // เวลาอาบปกติ
+var GIFT_BONUS = 2;
+var DIRT_COUNT = 6;     // จำนวนคราบต่อ 1 คน
+var AUTO_MS = 1000;     // ถ้าไม่มีใครกด ออโต้ถูให้ 1 คราบทุกกี่มิลลิวินาที
+var dirt = [], total = 0, lastAuto = 0;     // เพิ่มกี่วินาทีเมื่อคนในอ่างส่งของขวัญ
+var MAX_SHOWN = 12;     // จำนวนคิวที่โชว์
+var VIP_SCORE = 100;    // คะแนนที่ได้กรอบ VIP
+var PETS = ['🐱','🐶','🐰','🐻','🐼','🐹','🐥','🦊','🐷','🐸','🐨','🦁'];
+
+var users = new Map(), current = null, startAt = 0, endsAt = 0;
+var stat = { done: 0, like: 0, fol: 0, gift: 0 };
+var $ = function (s) { return document.querySelector(s); };
+var pick = function (n) { var h = 0; for (var i = 0; i < n.length; i++) h = (h * 31 + n.charCodeAt(i)) >>> 0; return PETS[h % PETS.length]; };
+
+// ===== รับอีเวนต์ =====
+function onEvent(e) {
+  if (!e.id) return;
+  sfx(e.type);
+  var u = users.get(e.id);
+  if (!u) { u = { id: e.id, name: e.name || e.id, pet: pick(e.id), score: 0, t: Date.now(), badge: '' }; users.set(e.id, u); }
+  if (e.type === 'join') u.score += 1;
+  if (e.type === 'like') { u.score += Math.min(e.count || 1, 15) * 2; u.badge = '❤️'; stat.like += e.count || 1; }
+  if (e.type === 'follow') { u.score += 30; u.badge = '⭐'; stat.fol++; }
+  if (e.type === 'gift') { u.score += 20 + (e.diamonds || 1) * 5; u.badge = '🎁'; stat.gift++; }
+  if (current && current.id === u.id) {
+    if (e.type === 'gift') { clean(3); fx(SCENES[sceneIdx].fx, 10); burst(14); }
+    if (e.type === 'like') { fx(['❤️'], 3); clean(1); }
+    if (e.type === 'follow') { fx(['⭐'], 5); clean(1); }
+    banner();
+  }
+  pump(); renderQueue(); renderStats();
+}
+// คิว: คะแนนสูงก่อน (ของขวัญ > ติดตาม > กดใจ > เข้าห้อง) เท่ากันใครมาก่อนได้ก่อน
+function waiting() { return Array.from(users.values()).filter(function (u) { return u !== current; }).sort(function (a, b) { return b.score - a.score || a.t - b.t; }); }
+
+// ===== อ่างอาบน้ำ =====
+function pump() {
+  if (current) return;
+  var n = waiting()[0]; if (!n) return;
+  current = n; startAt = Date.now(); endsAt = startAt + BATH_SECONDS * 1000;
+  var p = $('#pet'); p.className = 'on';
+  p.innerHTML = (n.score >= VIP_SCORE ? '<span class="crown">👑</span>' : '') + n.pet + '<i class="bl" style="left:13%"></i><i class="bl" style="right:13%"></i><span class="hat"></span><span class="sponge">🧽</span>';
+  spawnDirt(); lastAuto = Date.now(); banner(); burst(10); $('#shower').style.opacity = 1; sfx('start'); showerStart();
+}
+function banner() {
+  var b = $('#banner'); b.className = '';
+  b.textContent = '🎀 ' + current.name + ' ' + current.badge;
+  var s = document.createElement('small'); s.textContent = 'ลูบถูตัว · เหลือ ' + dirt.length + ' คราบ'; b.appendChild(s);
+}
+function finish() {
+  users.delete(current.id); current = null; stat.done++;
+  $('#pet').className = 'idle'; $('#banner').className = 'off'; $('#bar i').style.width = '0';
+  var d = $('#done'); d.classList.remove('show'); void d.offsetWidth; d.classList.add('show');
+  fx(['✨','🌟','💫'], 12); renderStats(); sfx('done'); showerStop();
+  setTimeout(function () { pump(); renderQueue(); }, 450);
+  renderQueue();
+}
+setInterval(function () {
+  if (!current) return;
+  if (dirt.length && Date.now() - lastAuto >= AUTO_MS) { lastAuto = Date.now(); clean(1); }
+  $('#bar i').style.width = (total ? (1 - dirt.length / total) * 100 : 0) + '%';
+  if (Math.random() < .6) burst(1);
+  if (Math.random() < .25) sfx('pop');
+  drop();
+  if (!dirt.length) finish();
+}, 250);
+
+// ===== เอฟเฟกต์ =====
+function burst(n) {
+  var r = $('#tubwrap');
+  for (var i = 0; i < n; i++) {
+    var b = document.createElement('div'); b.className = 'bub';
+    var s = 8 + Math.random() * 20;
+    b.style.cssText = 'width:' + s + 'px;height:' + s + 'px;left:' + (18 + Math.random() * 64) + '%;bottom:22%;--dx:' + (Math.random() * 40 - 20) + 'px;animation-delay:' + Math.random() * .4 + 's';
+    r.appendChild(b); setTimeout(function (x) { x.remove(); }, 3200, b);
+  }
+}
+function fx(list, n) {
+  var r = $('#tubwrap');
+  for (var i = 0; i < n; i++) {
+    var f = document.createElement('div'); f.className = 'fx';
+    f.textContent = list[i % list.length];
+    f.style.cssText = 'left:' + (20 + Math.random() * 60) + '%;bottom:35%;--dx:' + (Math.random() * 120 - 60) + 'px;animation-delay:' + Math.random() * .3 + 's';
+    r.appendChild(f); setTimeout(function (x) { x.remove(); }, 2200, f);
+  }
+}
+function drop() {
+  var s = $('#shower'), d = document.createElement('i'); d.className = 'drop';
+  d.style.left = (Math.random() * 20 + 2) + 'px'; s.appendChild(d); setTimeout(function () { d.remove(); }, 800);
+}
+
+// ===== แสดงผล =====
+function renderStats() { $('#s-done').textContent = stat.done; $('#s-like').textContent = stat.like; $('#s-fol').textContent = stat.fol; $('#s-gift').textContent = stat.gift; }
+function renderQueue() {
+  var box = $('#queue'); box.textContent = '';
+  var q = waiting();
+  $('#qh').textContent = q.length ? 'คิวถัดไป (' + q.length + ' คน)' : 'คิวถัดไป';
+  if (!q.length) { var e = document.createElement('div'); e.className = 'empty'; e.textContent = 'ยังไม่มีคิว รอคนเข้าห้องนะ'; box.appendChild(e); return; }
+  q.slice(0, MAX_SHOWN).forEach(function (u) {
+    var c = document.createElement('div'); c.className = 'q' + (u.score >= VIP_SCORE ? ' vip' : '');
+    var a = document.createElement('div'); a.className = 'av'; a.textContent = u.pet;
+    var n = document.createElement('span'); n.textContent = u.name + ' ' + u.badge;
+    c.appendChild(a); c.appendChild(n); box.appendChild(c);
+  });
+}
+
+// ===== คราบสกปรก / ถูตัว =====
+function blobSVG() {
+  var cols = ['#7B5231', '#5E3B22', '#6B6B3A', '#4A3A2E'], c = cols[Math.floor(Math.random() * cols.length)], n = 9, pts = [], i;
+  for (i = 0; i < n; i++) { var a = i / n * Math.PI * 2, r = 18 + Math.random() * 26; pts.push([50 + Math.cos(a) * r * (1 + Math.random() * .5), 50 + Math.sin(a) * r * .75]); }
+  var m = function (p, q) { return ((p[0] + q[0]) / 2).toFixed(1) + ' ' + ((p[1] + q[1]) / 2).toFixed(1); };
+  var path = 'M' + m(pts[n - 1], pts[0]);
+  for (i = 0; i < n; i++) path += 'Q' + pts[i][0].toFixed(1) + ' ' + pts[i][1].toFixed(1) + ' ' + m(pts[i], pts[(i + 1) % n]);
+  path += 'Z';
+  var out = '<svg viewBox="0 0 100 100"><g fill="' + c + '" stroke="#3E2615" stroke-width="2" stroke-linejoin="round"><path d="' + path + '"/>';
+  var dx = 38 + Math.random() * 24;   // ยอดคราบไหลย้อยลงมา
+  out += '<path d="M' + dx.toFixed(0) + ' 62q-4 14 0 22q4 4 6 -4q2 -12 -6 -18z"/>';
+  for (i = 0; i < 3; i++) out += '<circle cx="' + (8 + Math.random() * 84).toFixed(0) + '" cy="' + (10 + Math.random() * 80).toFixed(0) + '" r="' + (2 + Math.random() * 3).toFixed(1) + '"/>';
+  return out + '</g><ellipse cx="42" cy="40" rx="10" ry="5" fill="#fff" opacity=".22"/></svg>';
+}
+function spawnDirt() {
+  var p = $('#pet'); dirt = []; total = DIRT_COUNT;
+  for (var i = 0; i < DIRT_COUNT; i++) {
+    var d = document.createElement('i'); d.className = 'dirt'; var s = 16 + Math.random() * 14;
+    d.style.cssText = 'width:' + s + '%;height:' + s + '%;left:' + (10 + Math.random() * 62) + '%;top:' + (14 + Math.random() * 58) + '%';
+    d.innerHTML = blobSVG(); p.appendChild(d); dirt.push(d);
+  }
+}
+function suds(d) {
+  var w = $('#tubwrap'), t = w.getBoundingClientRect(), r = d.getBoundingClientRect();
+  for (var i = 0; i < 3; i++) {
+    var b = document.createElement('div'), s = 10 + Math.random() * 12; b.className = 'bub';
+    b.style.cssText = 'width:' + s + 'px;height:' + s + 'px;left:' + (r.left - t.left + r.width / 2 + Math.random() * 20 - 10) + 'px;bottom:' + (t.bottom - r.bottom + Math.random() * 10) + 'px;--dx:' + (Math.random() * 40 - 20) + 'px';
+    w.appendChild(b); setTimeout(function (x) { x.remove(); }, 2800, b);
+  }
+}
+function rub(d) {
+  var i = dirt.indexOf(d); if (i < 0) return;
+  dirt.splice(i, 1); suds(d);
+  d.classList.add('gone'); setTimeout(function (x) { x.remove(); }, 350, d);
+  sfx('pop'); if (current) banner();
+}
+function clean(n) { for (var i = 0; i < n && dirt.length; i++) rub(dirt[Math.floor(Math.random() * dirt.length)]); }
+var pressing = false;
+function scrub(ev, force) {
+  if (!current || !dirt.length) return;
+  var got = false;
+  dirt.slice().forEach(function (d) {
+    var r = d.getBoundingClientRect();
+    if (Math.hypot(r.left + r.width / 2 - ev.clientX, r.top + r.height / 2 - ev.clientY) < Math.max(r.width, 36)) { rub(d); got = true; }
+  });
+  if (!got && force) rub(dirt[0]);   // แตะพลาดนิดหน่อย ก็ยังช่วยถูให้ 1 คราบ
+}
+$('#tubwrap').addEventListener('pointerdown', function (e) { pressing = true; scrub(e, true); });
+$('#tubwrap').addEventListener('pointermove', function (e) { if (pressing) scrub(e, false); });
+window.addEventListener('pointerup', function () { pressing = false; });
+window.addEventListener('pointercancel', function () { pressing = false; });
+
+// ===== ธีม =====
+var SCENES = [
+  { id: 'bath', name: 'ห้องน้ำ', shelf: '🧴🧼🌷', tw: ['✨','⭐','💖'], foam: ['🫧','🫧','🦆'], fx: ['🎁','💖','✨'], amb: null },
+  { id: 'sea', name: 'ทะเล', shelf: '🐚🪸🦀', tw: ['🐠','🫧','⭐'], foam: ['🫧','🐟','🐙'], fx: ['🐠','🫧','🎁'], amb: ['🫧','🫧','🐟'], up: true },
+  { id: 'snow', name: 'หิมะ', shelf: '🧣⛄🍵', tw: ['❄️','✨','⭐'], foam: ['♨️','🫧','🦆'], fx: ['❄️','✨','🎁'], amb: ['❄️','❄️','✨'] },
+  { id: 'garden', name: 'สวนดอกไม้', shelf: '🌻🌷🦋', tw: ['🦋','🌸','✨'], foam: ['🫧','🌸','🐝'], fx: ['🌸','🦋','🎁'], amb: ['🌸','🌸','🍃'] }
+];
+var sceneIdx = 0, RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+function setScene(i) {
+  var s = SCENES[i]; sceneIdx = i;
+  $('#room').setAttribute('data-scene', s.id);
+  $('#shelf').textContent = s.shelf;
+  document.querySelectorAll('.tw').forEach(function (e, k) { e.textContent = s.tw[k % 3]; });
+  document.querySelectorAll('.foam').forEach(function (e, k) { e.textContent = s.foam[k % 3]; });
+  $('#b-scene').textContent = 'ธีม: ' + s.name;
+}
+setInterval(function () {
+  var s = SCENES[sceneIdx]; if (!s.amb || RM) return;
+  var a = document.createElement('div'); a.className = 'amb' + (s.up ? ' up' : '');
+  a.textContent = s.amb[Math.floor(Math.random() * s.amb.length)];
+  a.style.left = (Math.random() * 92) + '%'; a.style.fontSize = (12 + Math.random() * 12) + 'px';
+  $('#room').appendChild(a); setTimeout(function () { a.remove(); }, 6500);
+}, 700);
+
+// ===== เสียง (สังเคราะห์เอง ไม่ต้องโหลดไฟล์) =====
+var AC = null, snd = false, noiseBuf = null, shower = null;
+function ac() {
+  if (!AC) {
+    var C = window.AudioContext || window.webkitAudioContext; if (!C) return null;
+    AC = new C(); var n = AC.sampleRate * 2, b = AC.createBuffer(1, n, AC.sampleRate), d = b.getChannelData(0);
+    for (var i = 0; i < n; i++) d[i] = Math.random() * 2 - 1; noiseBuf = b;
+  }
+  if (AC.state === 'suspended') AC.resume();
+  return AC;
+}
+function tone(f, t0, dur, type, vol, f2) {
+  var c = ac(), t = c.currentTime + t0, o = c.createOscillator(), g = c.createGain();
+  o.type = type || 'sine'; o.frequency.setValueAtTime(f, t);
+  if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vol || .15, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + .05);
+}
+function noise(dur, freq, vol, q) {
+  var c = ac(), s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+  s.buffer = noiseBuf; f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = q || 1;
+  g.gain.setValueAtTime(vol, c.currentTime); g.gain.exponentialRampToValueAtTime(.0001, c.currentTime + dur);
+  s.connect(f); f.connect(g); g.connect(c.destination); s.start(); s.stop(c.currentTime + dur + .05);
+}
+function sfx(k) {
+  if (!snd || !ac()) return;
+  if (k === 'join') tone(420, 0, .12, 'sine', .12, 700);
+  else if (k === 'like') tone(880, 0, .08, 'sine', .1, 1200);
+  else if (k === 'follow') { tone(660, 0, .14, 'triangle', .14); tone(990, .1, .2, 'triangle', .14); }
+  else if (k === 'gift') { [784, 988, 1175, 1568].forEach(function (f, i) { tone(f, i * .07, .35, 'triangle', .13); }); noise(.4, 3000, .12, .8); }
+  else if (k === 'start') { noise(.5, 900, .25, .7); tone(300, 0, .25, 'sine', .1, 600); }
+  else if (k === 'pop') tone(500 + Math.random() * 500, 0, .07, 'sine', .1, 1100);
+  else if (k === 'done') [523, 659, 784, 1047].forEach(function (f, i) { tone(f, i * .09, .3, 'triangle', .14); });
+}
+function showerStart() {
+  if (!snd || shower || !ac()) return;
+  var c = AC, s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+  s.buffer = noiseBuf; s.loop = true; f.type = 'highpass'; f.frequency.value = 2500;
+  g.gain.setValueAtTime(.0001, c.currentTime); g.gain.exponentialRampToValueAtTime(.05, c.currentTime + .3);
+  s.connect(f); f.connect(g); g.connect(c.destination); s.start(); shower = { s: s, g: g };
+}
+function showerStop() {
+  if (!shower) return;
+  var sh = shower; shower = null;
+  sh.g.gain.setValueAtTime(.05, AC.currentTime); sh.g.gain.exponentialRampToValueAtTime(.0001, AC.currentTime + .3);
+  setTimeout(function () { try { sh.s.stop(); } catch (e) {} }, 400);
+}
+$('#b-snd').onclick = function () {
+  snd = !snd;
+  this.textContent = snd ? '🔊 เสียง: เปิด' : '🔇 เสียง: ปิด';
+  if (snd) { ac(); sfx('follow'); if (current) showerStart(); } else showerStop();
+};
+$('#b-scene').onclick = function () { setScene((sceneIdx + 1) % SCENES.length); sfx('pop'); };
+
+// ===== คนดูจำลอง / ปุ่มทดลอง =====
+var NAMES = ['มะม่วง','น้องฟ้า','Bobo','หมูกรอบ','ใบเตย','Kai','แพรว','โอ๊ต','ข้าวปั้น','Mint','พลอย','Tonkla','น้ำหวาน','Pao','ชานม'];
+function rnd() { var n = NAMES[Math.floor(Math.random() * NAMES.length)]; return { id: n, name: n }; }
+function ev(t, x) { var e = rnd(); e.type = t; for (var k in x) e[k] = x[k]; onEvent(e); }
+$('#b-join').onclick = function () { for (var i = 0; i < 3; i++) ev('join'); };
+$('#b-like').onclick = function () { ev('like', { count: 8 }); };
+$('#b-fol').onclick = function () { ev('follow'); };
+$('#b-gift').onclick = function () { ev('gift', { diamonds: 10 }); };
+var auto = true, autoT;
+function autoLoop() {
+  clearInterval(autoT);
+  if (!auto) return;
+  autoT = setInterval(function () {
+    var r = Math.random();
+    if (r < .55) ev('join'); else if (r < .8) ev('like', { count: 5 }); else if (r < .92) ev('follow'); else ev('gift', { diamonds: 5 });
+  }, 1500);
+}
+$('#b-auto').onclick = function () { auto = !auto; this.className = auto ? 'on' : 'alt'; this.textContent = auto ? 'ออโต้' : 'หยุด'; autoLoop(); };
+
+// ===== ต่อไลฟ์จริง (ใช้ได้เมื่อโฮสต์เองและมีเซิร์ฟเวอร์: เปิดหน้าด้วย ?ws=wss://...) =====
+var wsUrl = new URLSearchParams(location.search).get('ws');
+if (wsUrl) {
+  auto = false; $('#ctl').style.display = 'none';
+  (function conn() { var w = new WebSocket(wsUrl); w.onmessage = function (m) { onEvent(JSON.parse(m.data)); }; w.onclose = function () { setTimeout(conn, 3000); }; })();
+} else autoLoop();
+setScene(0);
+
+renderQueue(); renderStats();
+</script>
+</body>
+</html>

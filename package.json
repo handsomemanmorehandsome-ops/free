@@ -1,0 +1,6 @@
+{
+  "name": "bath-live",
+  "version": "2.0.0",
+  "scripts": { "start": "node server.js" },
+  "dependencies": { "tiktok-live-connector": "latest", "ws": "^8.18.0" }
+}
