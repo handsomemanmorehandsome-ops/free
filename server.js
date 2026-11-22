@@ -30,6 +30,10 @@ const who = (d) => {
   return { id, name: u.nickname || d.nickname || id };
 };
 
+// ใส่ options ให้ครบ (ไลบรารีบางรุ่นพังถ้าไม่ส่ง options)
+const OPTIONS = { processInitialData: false };
+if (process.env.SIGN_API_KEY) OPTIONS.signApiKey = process.env.SIGN_API_KEY;   // ถ้ามีคีย์ Euler Stream ให้ใส่ใน Render
+
 let timer = null;
 function retry(sec) {
   if (timer) return;
@@ -41,7 +45,7 @@ process.on('unhandledRejection', (e) => { console.log('ข้อผิดพล�
 
 function start() {
   let live;
-  try { live = new Conn(USERNAME); } catch (e) { console.log('สร้างการเชื่อมต่อไม่ได้:', e.message || e); return retry(15); }
+  try { live = new Conn(USERNAME, OPTIONS); } catch (e) { console.log('สร้างการเชื่อมต่อไม่ได้:', e.message || e); return retry(15); }
   live.on('error', (e) => console.log('ไลบรารีแจ้ง error:', (e && e.message) || e));
 
   live.connect()
