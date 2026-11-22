@@ -34,7 +34,15 @@ wss.on('connection', (ws) => ws.send(JSON.stringify({ type: 'status', text: stat
 const who = (d) => {
   const u = d.user || d;
   const id = u.uniqueId || d.uniqueId || u.userId || d.userId || u.id || u.nickname || d.nickname || 'viewer';
-  return { id: String(id), name: u.nickname || d.nickname || u.uniqueId || d.uniqueId || String(id) };
+  const urls = [];
+  const add = (z) => { if (typeof z === 'string') urls.push(z); else if (Array.isArray(z)) z.forEach((y) => typeof y === 'string' && urls.push(y)); };
+  [u.profilePictureUrl, d.profilePictureUrl, u.profilePicture, u.profilePictureUrls, d.profilePictureUrls, u.avatarThumb, u.avatarMedium, u.avatarLarger].forEach((x) => {
+    if (!x) return;
+    if (typeof x === 'string' || Array.isArray(x)) add(x);
+    else [x.url, x.urls, x.urlList, x.urlListList].forEach(add);
+  });
+  const pic = urls.find((x) => /^https?:/.test(x) && !/\.heic/i.test(x)) || '';
+  return { id: String(id), name: u.nickname || d.nickname || u.uniqueId || d.uniqueId || String(id), pic };
 };
 
 const shown = {};   // จดตัวอย่างข้อมูลของแต่ละอีเวนต์ไว้ใน Logs ครั้งแรกครั้งเดียว

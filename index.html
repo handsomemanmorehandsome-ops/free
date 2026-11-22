@@ -107,6 +107,9 @@ button{border-radius:20px;background:linear-gradient(#FF9EC3,#FF7DAE)}button.alt
 .dirt svg{width:100%;height:100%;display:block;overflow:visible}
 .dirt.gone{transform:scale(0) !important;opacity:0}
 #tubwrap{touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none}
+#pet .pic{width:1.05em;height:1.05em;border-radius:50%;object-fit:cover;background:#FFE07A;border:4px solid #fff;box-shadow:0 0 0 3px var(--ink);display:block}
+#pet.haspic .bl{display:none}
+.q .av img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
 @media (prefers-reduced-motion:reduce){.tw{animation:none}.amb{display:none}}
 @media (prefers-reduced-motion:reduce){#pet.on,.sponge,#water svg,.foam{animation:none}.bub,.fx,.drop{animation-duration:.01s}}
 </style>
@@ -160,7 +163,8 @@ function onEvent(e) {
   if (!e.id) return;
   sfx(e.type);
   var u = users.get(e.id);
-  if (!u) { u = { id: e.id, name: e.name || e.id, pet: pick(e.id), score: 0, t: Date.now(), badge: '' }; users.set(e.id, u); }
+  if (!u) { u = { id: e.id, name: e.name || e.id, pet: pick(e.id), pic: e.pic || '', score: 0, t: Date.now(), badge: '' }; users.set(e.id, u); }
+  if (e.pic && !u.pic) u.pic = e.pic;
   if (e.type === 'join') u.score += 1;
   if (e.type === 'like') { u.score += Math.min(e.count || 1, 15) * 2; u.badge = '❤️'; stat.like += e.count || 1; }
   if (e.type === 'follow') { u.score += 30; u.badge = '⭐'; stat.fol++; }
@@ -181,8 +185,9 @@ function pump() {
   if (current) return;
   var n = waiting()[0]; if (!n) return;
   current = n; startAt = Date.now(); endsAt = startAt + BATH_SECONDS * 1000;
-  var p = $('#pet'); p.className = 'on';
-  p.innerHTML = (n.score >= VIP_SCORE ? '<span class="crown">👑</span>' : '') + n.pet + '<i class="bl" style="left:13%"></i><i class="bl" style="right:13%"></i><span class="hat"></span><span class="sponge">🧽</span>';
+  var p = $('#pet'); p.className = 'on' + (n.pic ? ' haspic' : '');
+  p.innerHTML = (n.score >= VIP_SCORE ? '<span class="crown">👑</span>' : '') + '<span class="face"></span><i class="bl" style="left:13%"></i><i class="bl" style="right:13%"></i><span class="hat"></span><span class="sponge">🧽</span>';
+  faceInto(p.querySelector('.face'), n, 'pic');
   spawnDirt(); lastAuto = Date.now(); banner(); burst(10); $('#shower').style.opacity = 1; sfx('start'); showerStart();
 }
 function banner() {
@@ -207,6 +212,16 @@ setInterval(function () {
   drop();
   if (!dirt.length) finish();
 }, 250);
+
+// ===== รูปหน้า: ใช้รูปโปรไฟล์ ถ้าไม่มี/โหลดไม่ได้ ใช้น้องสัตว์แทน =====
+function faceInto(el, u, cls) {
+  el.textContent = '';
+  if (!u.pic) { el.textContent = u.pet; return; }
+  var im = document.createElement('img');
+  im.referrerPolicy = 'no-referrer'; if (cls) im.className = cls;
+  im.onerror = function () { el.textContent = u.pet; if (el.parentNode) el.parentNode.classList.remove('haspic'); };
+  im.src = u.pic; el.appendChild(im);
+}
 
 // ===== เอฟเฟกต์ =====
 function burst(n) {
@@ -241,7 +256,7 @@ function renderQueue() {
   if (!q.length) { var e = document.createElement('div'); e.className = 'empty'; e.textContent = 'ยังไม่มีคิว รอคนเข้าห้องนะ'; box.appendChild(e); return; }
   q.slice(0, MAX_SHOWN).forEach(function (u) {
     var c = document.createElement('div'); c.className = 'q' + (u.score >= VIP_SCORE ? ' vip' : '');
-    var a = document.createElement('div'); a.className = 'av'; a.textContent = u.pet;
+    var a = document.createElement('div'); a.className = 'av'; faceInto(a, u);
     var n = document.createElement('span'); n.textContent = u.name + ' ' + u.badge;
     c.appendChild(a); c.appendChild(n); box.appendChild(c);
   });
